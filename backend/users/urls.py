@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, LogoutView, UserSearchView, AvailableUsersView
+from .views import RegisterView, LoginView, LogoutView, UserSearchView, AvailableUsersView, current_user
 
 urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('search_user/', UserSearchView.as_view(), name='search_user'),
     path('users/', AvailableUsersView.as_view(), name='users'),
+    path('current_user/', current_user, name='current_user'),  # Добавляем URL для текущего пользователя
 ]

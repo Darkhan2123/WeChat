@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SidebarService } from '../sidebar.service'
 import {catchError, Subject, of} from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
+import * as jwt_decode from 'jwt-decode';
 
 @Component({
     selector: 'app-home',
@@ -11,11 +12,12 @@ import { debounceTime, switchMap } from 'rxjs/operators';
     styleUrls: ['./home.component.css']
   })
   export class HomeComponent implements OnInit{
-    username = '';
     users: any [] = [];
     user_list: any [] = [];
     error: string = ''
     searchTerms = new Subject<string>();
+    username: any;
+    search: any;
 
     constructor(private authService: AuthService,
                 private sidebarService: SidebarService,
@@ -25,6 +27,14 @@ import { debounceTime, switchMap } from 'rxjs/operators';
     }
 
     ngOnInit() {
+      const token = localStorage.getItem('access_token')
+
+      if (token) {
+        // @ts-ignore
+        const decodedToken: any = jwt_decode(token);
+        this.username = decodedToken.username
+      }
+
       this.loadUsers();
     }
 
