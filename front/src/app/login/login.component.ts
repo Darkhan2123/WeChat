@@ -43,6 +43,7 @@ export class LoginComponent implements OnInit{
       next: (response) => {
         localStorage.setItem('access_token', response.access);
         localStorage.setItem('refresh_token', response.refresh);
+        localStorage.setItem('currentUserId', response.user_id);
         this.router.navigate(['/home']);
       },
       error: (err) => {
@@ -54,6 +55,7 @@ export class LoginComponent implements OnInit{
     this.authService.register(this.username, this.email, this.password).subscribe({
       next: (response) => {
         console.log('Registration successful', response);
+        localStorage.setItem('currentUserId', response.user_id);
         this.router.navigate(['/home']);
       },
       error: (error) => {

@@ -28,6 +28,8 @@
   flex: 1;
   border-right: 1px solid ;
   background-color: #3e3c61;
+  overflow-y: auto;
+
 }
 .sidebar .navbar{
   display: flex;
