@@ -1,12 +1,12 @@
+from django.db.models import Q
 from django.http import Http404
-from django.shortcuts import render
+from rest_framework import permissions, status, exceptions, authentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import UserSerializer, CustomUserSerializer
 from .models import User
 import jwt, datetime
-
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
@@ -25,7 +25,6 @@ class LoginView(APIView):
 
         if user is None:
             raise AuthenticationFailed('User not found')
-
         if not user.check_password(password):
             raise AuthenticationFailed('Incorrect password')
 
@@ -46,54 +45,6 @@ class LoginView(APIView):
 
         return response
 
-class UserView(APIView):
-    def get_object(self, id):
-        try:
-            return User.objects.get(id=id)
-        except User.DoesNotExist:
-            raise Http404
-
-    def get(self, request, id, format=None):
-        user = self.get_object(id)
-        serializer = CustomUserSerializer(user)
-        return Response(serializer.data)
-'''
-class HomeView(APIView):
-    def get(self, request):
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed('Unauthenticated')
-
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated due to expired token')
-        except jwt.InvalidTokenError:
-            raise AuthenticationFailed('Invalid token')
-
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-
-        return Response(serializer.data)
-'''
-
-class ChatView(APIView):
-    def get(self, request):
-        # Authentication check
-        token = request.COOKIES.get('jwt')
-        if not token:
-            raise AuthenticationFailed('Unauthenticated')
-        try:
-            payload = jwt.decode(token, 'secret', algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed('Unauthenticated')
-
-        # Assuming you have a model or method to fetch chat data
-        # For demonstration, let's say it's fetching all users as a placeholder
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
-
 class LogoutView(APIView):
     def post(self, request):
         response = Response()
@@ -105,13 +56,13 @@ class LogoutView(APIView):
 
         return response
 
-        
-        # testing
-
-class HomeView(APIView):
+class UserSearchView(APIView):
+    permission_classes = (permissions.AllowAny,)
     def get(self, request):
-        users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
+        query = request.query_params.get('query')
+        if not query:
+            raise Http404('Please enter a query')
+
+        users = User.objects.filter(Q(name__icontains=query) | Q(email__icontains=query))
+        serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
-
-

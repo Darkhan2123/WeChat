@@ -10,4 +10,12 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+class ChatRoom(models.Model):
+    title = models.CharField(max_length=255)
+    members = models.ManyToManyField(User, related_name='chatrooms')
 
+class Message(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages')
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
