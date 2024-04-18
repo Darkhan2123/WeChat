@@ -66,3 +66,12 @@ class UserSearchView(APIView):
         users = User.objects.filter(Q(name__icontains=query) | Q(email__icontains=query))
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
+
+
+class AvailableUsersView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        users = User.objects.all()
+        serializer = CustomUserSerializer(users, many=True)
+        return Response(serializer.data)
