@@ -1,7 +1,5 @@
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import Http404, JsonResponse
-from django.views.decorators.http import require_GET
+from django.http import Http404
 from rest_framework import permissions, status, exceptions, authentication
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
@@ -77,15 +75,3 @@ class AvailableUsersView(APIView):
         users = User.objects.all()
         serializer = CustomUserSerializer(users, many=True)
         return Response(serializer.data)
-
-@require_GET
-@login_required
-def current_user(request):
-    # Получаем информацию о текущем пользователе
-    user = request.user
-    # Возвращаем информацию о пользователе в формате JSON
-    return JsonResponse({
-        'username': user.username,
-        'email': user.email,
-        # Другие поля пользователя, которые вы хотите предоставить
-    })

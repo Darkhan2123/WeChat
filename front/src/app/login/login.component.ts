@@ -44,7 +44,6 @@ export class LoginComponent implements OnInit{
         localStorage.setItem('access_token', response.access);
         localStorage.setItem('refresh_token', response.refresh);
         localStorage.setItem('currentUserId', response.user_id);
-        localStorage.setItem('token', response.jwt)
         this.router.navigate(['/home']);
       },
       error: (err) => {
